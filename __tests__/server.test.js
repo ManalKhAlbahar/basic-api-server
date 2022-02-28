@@ -9,7 +9,6 @@ const request = supertest(server.app);
 describe("test my server", () => {
   it("test/", async () => {
     const response = await request.get("/");
-    // console.log(response);
     expect(response.text).toEqual("home route");
   });
 });
@@ -23,7 +22,7 @@ describe("test food route", () => {
   it("post new food", async () => {
     const response = await request.post("/food").send({
       foodName: "test",
-      foodMainIngredient: "test",
+     ingredient: "test",
     });
     expect(response.status).toEqual(201);
     id = response.body.id;
@@ -56,8 +55,8 @@ describe("test clothes route", () => {
 
   it("post new clothes", async () => {
     const response = await request.post("/clothes").send({
-      clothesColor: "test",
-      clothesSize: "test",
+      clothesType: "test",
+      fabricType: "test",
     });
     expect(response.status).toEqual(201);
     id = response.body.id;
