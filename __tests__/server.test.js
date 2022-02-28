@@ -9,7 +9,6 @@ const request = supertest(server.app);
 describe("test my server", () => {
   it("test/", async () => {
     const response = await request.get("/");
-    // console.log(response);
     expect(response.text).toEqual("home route");
   });
 });
