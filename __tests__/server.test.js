@@ -2,13 +2,13 @@
 const server = require('../src/server');
 const supertest = require('supertest');
 const request = supertest(server.app);
-const {db} = require('../src/models/index')
+const {databaseexported} = require('../src/models/index')
 let id;
 beforeAll( async () =>{
-    await db.sync();
+    await databaseexported.sync();
 })
 afterAll( async () =>{
-    await db.drop();
+    await databaseexported.drop();
 })
 describe('testing 404',()=>{
     it ('testing /person',async()=>{
@@ -31,8 +31,7 @@ describe('testing food routes',()=>{
     it ('post new food', async () => {
         const response = await request.post('/food').send({
             foodName: "test",
-            ingredient
-   : "test"
+            ingredient : "test"
         });
         expect(response.status).toEqual(201);
         id = response.body.id
@@ -66,7 +65,7 @@ describe('testing clothes routes',()=>{
     })
     it ('post new clothes', async () => {
         const response = await request.post('/clothes').send({
-            clothesType: "test",
+            chlothesType: "test",
             fabricType : "test"
         });
         expect(response.status).toEqual(201);
@@ -81,7 +80,7 @@ describe('testing clothes routes',()=>{
 
    it ('update new clothes', async () => {
     const response = await request.put(`/clothes/${id}`).send({
-        clothesTy: "test",
+        chlothesType: "test",
         fabricType : "test"
     })
     expect(response.status).toEqual(201);
@@ -92,3 +91,5 @@ it ('deleting clothes by id',async()=>{
 
 })
 })
+
+
