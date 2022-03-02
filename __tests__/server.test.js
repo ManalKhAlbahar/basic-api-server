@@ -1,83 +1,94 @@
-"use strict";
-const server = require("../src/server");
-
-const supertest = require("supertest");
-
+'use strict';
+const server = require('../src/server');
+const supertest = require('supertest');
 const request = supertest(server.app);
+const {db} = require('../src/models/index')
+let id;
+beforeAll( async () =>{
+    await db.sync();
+})
+afterAll( async () =>{
+    await db.drop();
+})
+describe('testing 404',()=>{
+    it ('testing /person',async()=>{
+        const response = await request.get('/wrongPath')
+        expect(response.status).toEqual(404);
+    })
+    
+    it ('testing bad method',async()=>{
+         id =1;
+        const response = await request.post('/')
+        expect(response.status).toEqual(404);
+    })
+})
 
+describe('testing food routes',()=>{
+    it('testing get all food',async()=>{
+        const response = await request.get('/food')
+        expect(response.status).toEqual(200)
+    })
+    it ('post new food', async () => {
+        const response = await request.post('/food').send({
+            foodName: "test",
+            ingredient
+   : "test"
+        });
+        expect(response.status).toEqual(201);
+        id = response.body.id
+    });
+        
+    it ('testing food get by id method',async()=>{
+       const response = await request.get(`/food/${id}`)
+       expect(response.status).toEqual(200);
+   })
+  
 
-describe("test my server", () => {
-  it("test/", async () => {
-    const response = await request.get("/");
-    // console.log(response);
-    expect(response.text).toEqual("home route");
-  });
+   it ('update new food', async () => {
+    const response = await request.put(`/food/${id}`).send({
+        foodName: "test",
+        ingredient : "test"
+    })
+    expect(response.status).toEqual(201);
 });
 
-describe("test food route", () => {
-  it("test get food", async () => {
-    const response = await request.get("/food");
-    expect(response.status).toEqual(200);
-  });
-
-  it("post new food", async () => {
-    const response = await request.post("/food").send({
-      foodName: "test",
-      foodMainIngredient: "test",
-    });
-    expect(response.status).toEqual(201);
-    id = response.body.id;
-  });
-
-  it("test get food by id", async () => {
-    const response = await request.get(`/food/${id}`);
-    expect(response.status).toEqual(200);
-  });
-
-  it("test delete food", async () => {
-    const response = await request.delete(`/food/${id}`);
+it ('deleting food by id',async()=>{
+    const response = await request.delete(`/food/${id}`)
     expect(response.status).toEqual(204);
-  });
+})
 
-  it("test update food", async () => {
-    const response = await request.post(`/food/${id}`).send({
-      foodName: "test",
-      ingredient: "test",
+})
+
+describe('testing clothes routes',()=>{
+    it('testing get all clothes',async()=>{
+        const response = await request.get('/clothes')
+        expect(response.status).toEqual(200)
+    })
+    it ('post new clothes', async () => {
+        const response = await request.post('/clothes').send({
+            clothesType: "test",
+            fabricType : "test"
+        });
+        expect(response.status).toEqual(201);
+        id = response.body.id
     });
-    expect(response.status).toEqual(201);
-  });
-});
+        
+    it ('testing clothes get by id method',async()=>{
+       const response = await request.get(`/clothes/${id}`)
+       expect(response.status).toEqual(200);
+   })
+  
 
-describe("test clothes route", () => {
-  it("test get clothes", async () => {
-    const response = await request.get("/clothes");
-    expect(response.status).toEqual(200);
-  });
-
-  it("post new clothes", async () => {
-    const response = await request.post("/clothes").send({
-      clothesColor: "test",
-      clothesSize: "test",
-    });
-    expect(response.status).toEqual(201);
-    id = response.body.id;
-  });
-
-  it("test delete clothes", async () => {
-    const response = await request.delete(`/clothes/${id}`);
-    expect(response.status).toEqual(204);
-  });
-
-  it("test get clothes by id", async () => {
-    const response = await request.get(`/clothes/${id}`);
-    expect(response.status).toEqual(200);
-  });
-
-  it("test update clothes", async () => {
+   it ('update new clothes', async () => {
     const response = await request.put(`/clothes/${id}`).send({
-        clothesType: "test",
-        fabricType: "test",
-    });
+        clothesTy: "test",
+        fabricType : "test"
+    })
     expect(response.status).toEqual(201);
-  });
-});
+})
+it ('deleting clothes by id',async()=>{
+    const response = await request.delete(`/clothes/${id}`)
+    expect(response.status).toEqual(204)
+
+})
+})
